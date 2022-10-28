@@ -1,0 +1,27 @@
+{"properties": [
+  {
+    "name": "folder.watcher.source-dir",
+    "type": "java.lang.String",
+    "description": "A description for 'folder.watcher.source-dir'"
+  },
+  {
+    "name": "folder.watcher.processing-dir",
+    "type": "java.lang.String",
+    "description": "A description for 'folder.watcher.processing-dir'"
+  },
+  {
+    "name": "folder.watcher.completed-dir",
+    "type": "java.lang.String",
+    "description": "A description for 'folder.watcher.completed-dir'"
+  },
+  {
+    "name": "folder.watcher.error-dir",
+    "type": "java.lang.String",
+    "description": "A description for 'folder.watcher.error-dir'"
+  },
+  {
+    "name": "folder.watcher.allowed-file-formate",
+    "type": "java.lang.String",
+    "description": "A description for 'folder.watcher.allowed-file-formate'"
+  }
+]}
