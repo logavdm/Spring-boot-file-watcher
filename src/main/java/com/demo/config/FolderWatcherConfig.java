@@ -1,5 +1,6 @@
 package com.demo.config;
 
+import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 
 import java.io.File;
@@ -12,12 +13,14 @@ import java.nio.file.Paths;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import com.demo.service.FileProcessingService;
 
+import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -32,8 +35,8 @@ public class FolderWatcherConfig {
 		this.watcher = FileSystems.getDefault().newWatchService();
 		this.fileProcessingService = fileService;
 		Path logDir = Paths.get(props.getSourceDir());
-		logDir.register(watcher, ENTRY_MODIFY);
-		
+		logDir.register(watcher, ENTRY_MODIFY, ENTRY_CREATE);
+
 	}
 
 	@Scheduled(initialDelay = 500, fixedDelay = 1000)
@@ -43,11 +46,27 @@ public class FolderWatcherConfig {
 		Path watchPath = (Path) key.watchable();
 		for (WatchEvent<?> event : key.pollEvents()) {
 			WatchEvent.Kind<?> kind = event.kind();
+
 			if (ENTRY_MODIFY.equals(kind)) {
-				try {					
+				try {
 					Path fullPath = watchPath.resolve(event.context().toString());
-					File file = fullPath.toFile();					
-					if(checkFileModificationCompleted(file)) {
+					File file = fullPath.toFile();
+
+//					boolean isGrowing = false;
+//		            Long initialWeight = new Long(0);
+//		            Long finalWeight = new Long(0);
+
+//					do {
+//		                initialWeight = fullPath.toFile().length();
+//		                Thread.sleep(1000);
+//		                finalWeight = fullPath.toFile().length();
+//		                isGrowing = initialWeight < finalWeight;
+//
+//		            } while(isGrowing);
+//
+//		            System.out.println("Finished creating file!");
+
+					if (checkFileModificationCompleted(file)) {
 						log.info("Start processing the File -> {} ", event.context());
 						fileProcessingService.processFile(file);
 						log.info("Processing Completed -> {} ", event.context());
@@ -68,5 +87,7 @@ public class FolderWatcherConfig {
 		}
 		return false;
 	}
+
+	
 
 }
